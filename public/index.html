@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support — Live Ledger</title>
+
+<!-- Link preview: shows the live-rendered thermometer image -->
+<meta property="og:title" content="Support the project">
+<meta property="og:description" content="Live-updating tip ledger">
+<meta property="og:image" content="/thermometer.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="/thermometer.png">
+
+<style>
+  @font-face {
+    font-family: 'IBM Plex Mono';
+    src: local('IBM Plex Mono');
+  }
+
+  :root {
+    --bg-top: #0a0a0d;
+    --bg-bottom: #131318;
+    --grid: rgba(212, 175, 55, 0.055);
+    --gold: #d4af37;
+    --gold-bright: #f2d572;
+    --gold-dim: rgba(212, 175, 55, 0.35);
+    --text: #eae6da;
+    --text-dim: #8a8578;
+    --bar-bg: rgba(255, 255, 255, 0.06);
+    --green: #6fbf8f;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  body {
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 40px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .panel {
+    width: 100%;
+    max-width: 640px;
+    position: relative;
+    padding: 48px 44px 36px;
+  }
+
+  /* Blueprint corner brackets, matching the canvas-rendered image */
+  .panel::before, .panel::after,
+  .panel .br-tr, .panel .br-bl {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-color: var(--gold-dim);
+    border-style: solid;
+    border-width: 0;
+  }
+  .panel::before { top: 0; left: 0; border-top-width: 1.5px; border-left-width: 1.5px; }
+  .panel .br-tr   { top: 0; right: 0; border-top-width: 1.5px; border-right-width: 1.5px; }
+  .panel .br-bl   { bottom: 0; left: 0; border-bottom-width: 1.5px; border-left-width: 1.5px; }
+  .panel::after  { bottom: 0; right: 0; border-bottom-width: 1.5px; border-right-width: 1.5px; }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', 'SF Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--text-dim);
+    margin: 0 0 18px;
+  }
+
+  .ticker {
+    font-family: 'IBM Plex Mono', 'SF Mono', monospace;
+    font-size: clamp(56px, 12vw, 88px);
+    font-weight: 700;
+    color: var(--gold-bright);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    transition: text-shadow 0.4s ease;
+  }
+  .ticker.flash {
+    text-shadow: 0 0 24px rgba(242, 213, 114, 0.55);
+  }
+
+  .goal-line {
+    font-size: 16px;
+    color: var(--text-dim);
+    margin: 10px 0 28px;
+  }
+  .goal-line span { color: var(--text); }
+
+  .bar-track {
+    position: relative;
+    height: 40px;
+    border-radius: 6px;
+    background: var(--bar-bg);
+    border: 1.5px solid var(--gold-dim);
+    overflow: hidden;
+  }
+  .bar-fill {
+    position: absolute;
+    inset: 0;
+    width: 0%;
+    background: linear-gradient(90deg, #9a7b1f, var(--gold-bright));
+    transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .bar-pct {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--bg-top);
+    mix-blend-mode: difference;
+    filter: invert(1);
+  }
+
+  .ledger {
+    margin-top: 36px;
+  }
+  .ledger-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .ledger-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .ledger-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 2px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 14px;
+    animation: rowIn 0.5s ease;
+  }
+  .ledger-row .name { color: var(--text); }
+  .ledger-row .amt {
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--green);
+  }
+  .empty-state {
+    font-size: 14px;
+    color: var(--text-dim);
+    padding: 16px 2px;
+  }
+
+  @keyframes rowIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bar-fill, .ticker, .ledger-row { transition: none; animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="panel">
+  <span class="br-tr"></span><span class="br-bl"></span>
+
+  <p class="eyebrow">SUPPORT THE PROJECT</p>
+
+  <div class="ticker" id="ticker">$0</div>
+  <p class="goal-line">raised of <span id="goal">$0</span> goal</p>
+
+  <div class="bar-track">
+    <div class="bar-fill" id="barFill"></div>
+    <span class="bar-pct" id="barPct">0%</span>
+  </div>
+
+  <div class="ledger">
+    <div class="ledger-label">
+      <span>RECENT SUPPORT</span>
+      <span id="supporterCount">0 total</span>
+    </div>
+    <div class="ledger-list" id="ledgerList">
+      <div class="empty-state">No entries yet — be the first.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentTotal = 0;
+
+  function formatMoney(n) {
+    return '$' + Math.round(n).toLocaleString('en-US');
+  }
+
+  function animateTicker(el, from, to) {
+    const duration = 700;
+    const start = performance.now();
+    function step(now) {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const val = from + (to - from) * eased;
+      el.textContent = formatMoney(val);
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  async function refresh() {
+    let data;
+    try {
+      const res = await fetch('/api/stats', { cache: 'no-store' });
+      data = await res.json();
+    } catch (err) {
+      return; // silent fail, retry on next poll
+    }
+
+    const ticker = document.getElementById('ticker');
+    if (data.total !== currentTotal) {
+      animateTicker(ticker, currentTotal, data.total);
+      ticker.classList.add('flash');
+      setTimeout(() => ticker.classList.remove('flash'), 900);
+      currentTotal = data.total;
+    }
+
+    document.getElementById('goal').textContent = formatMoney(data.goal);
+    document.getElementById('barFill').style.width = (data.pct * 100).toFixed(1) + '%';
+    document.getElementById('barPct').textContent = Math.round(data.pct * 100) + '%';
+    document.getElementById('supporterCount').textContent = data.supporterCount + ' total';
+
+    const list = document.getElementById('ledgerList');
+    if (data.recent && data.recent.length) {
+      list.innerHTML = data.recent.map(r => `
+        <div class="ledger-row">
+          <span class="name">${escapeHtml(r.name || 'Anonymous')}</span>
+          <span class="amt">+${formatMoney(r.amount)}</span>
+        </div>
+      `).join('');
+    }
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  refresh();
+  setInterval(refresh, 5000);
+</script>
+
+</body>
+</html>
