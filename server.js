@@ -4,7 +4,7 @@ const store = require('./lib/store');
 const { generateThermometerImage } = require('./lib/generateImage');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
 // Ko-fi sends application/x-www-form-urlencoded with a `data` field
 // containing a JSON string.
