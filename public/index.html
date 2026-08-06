@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Support — Live Jar</title>
+<title>Support — Goon Olympics</title>
 
-<meta property="og:title" content="Support the project">
-<meta property="og:description" content="Live-updating tip jar">
+<meta property="og:title" content="Tip on Ko-fi ☕ — Goon Olympics">
+<meta property="og:description" content="Live-updating tip tracker">
 <meta property="og:image" content="/thermometer.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="/thermometer.png">
@@ -22,8 +22,12 @@
     --gold-glow: rgba(242, 213, 114, 0.5);
     --text: #eae6da;
     --text-dim: #8a8578;
-    --green: #6fbf8f;
+    --steam: #f7f1e3;
+    --steam-dim: rgba(247, 241, 227, 0.4);
     --glass-stroke: rgba(234, 230, 218, 0.28);
+    --silver: #c9d0d6;
+    --bronze: #c9884a;
+    --live: #6fbf8f;
   }
 
   * { box-sizing: border-box; }
@@ -55,6 +59,12 @@
     max-width: 720px;
     position: relative;
     padding: 48px 44px 40px;
+    animation: stageIn 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @keyframes stageIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
   .stage::before, .stage::after,
@@ -89,14 +99,40 @@
     margin: 0 0 28px;
   }
 
-  .jar-wrap {
+  .live-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+    margin: -16px 0 26px;
+  }
+  .live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--live);
+    box-shadow: 0 0 6px rgba(111,191,143,0.7);
+    animation: liveDotPulse 1.6s ease-in-out infinite;
+  }
+  @keyframes liveDotPulse {
+    0%, 100% { opacity: 0.5; transform: scale(0.85); }
+    50%      { opacity: 1; transform: scale(1.15); }
+  }
+
+  /* ---------- Mug ---------- */
+
+  .mug-wrap {
     position: relative;
     width: 240px;
     height: 300px;
     margin: 0 auto 8px;
   }
 
-  .jar-glow {
+  .mug-glow {
     position: absolute;
     inset: -40px;
     border-radius: 50%;
@@ -111,27 +147,40 @@
     50%      { opacity: 0.45; transform: scale(1.05); }
   }
 
-  svg.jar-svg { position: relative; width: 100%; height: 100%; display: block; }
+  svg.mug-svg { position: relative; width: 100%; height: 100%; display: block; transform-origin: 50% 85%; }
 
-  .coin {
+  @keyframes clinkWiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25%      { transform: rotate(-3deg); }
+    60%      { transform: rotate(2.5deg); }
+    85%      { transform: rotate(-1deg); }
+  }
+  svg.mug-svg.clink { animation: clinkWiggle 0.45s ease; }
+
+  .steam {
     position: absolute;
-    font-size: 18px;
-    line-height: 1;
+    border-radius: 50%;
+    background: linear-gradient(to top, var(--steam-dim), transparent);
+    filter: blur(2.5px);
     pointer-events: none;
     will-change: transform, opacity;
-    filter: drop-shadow(0 0 3px rgba(242,213,114,0.6));
+  }
+  @keyframes steamRise {
+    0%   { transform: translateY(0) translateX(0) scale(0.7) rotate(0deg); opacity: 0; }
+    18%  { opacity: 0.6; }
+    55%  { transform: translateY(-46px) translateX(6px) scale(1.15) rotate(6deg); opacity: 0.4; }
+    100% { transform: translateY(-92px) translateX(-5px) scale(1.4) rotate(-5deg); opacity: 0; }
   }
 
-  @keyframes coinDrift {
-    0%   { transform: translateY(-20px) rotate(0deg);   opacity: 0; }
-    10%  { opacity: 1; }
-    85%  { opacity: 1; }
-    100% { transform: translateY(260px) rotate(160deg); opacity: 0; }
+  .puff {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--steam);
+    pointer-events: none;
   }
-
-  @keyframes coinBurst {
-    0%   { transform: translate(0,0) rotate(0deg) scale(1); opacity: 1; }
-    100% { transform: var(--burst-end) rotate(var(--burst-rot)) scale(0.7); opacity: 0; }
+  @keyframes puffBurst {
+    0%   { transform: translate(0,0) scale(1); opacity: 1; }
+    100% { transform: var(--burst-end) scale(0.5); opacity: 0; }
   }
 
   .support-row {
@@ -178,9 +227,94 @@
     background: rgba(212, 175, 55, 0.08);
   }
   .tip-btn:active { transform: translateY(0) scale(0.98); }
+  .tip-btn:focus-visible {
+    outline: 2px solid var(--gold-bright);
+    outline-offset: 3px;
+  }
 
-  .ledger { margin-top: 34px; }
-  .ledger-label {
+  .community-link {
+    display: block;
+    text-align: center;
+    margin-top: 18px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    letter-spacing: 0.03em;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .community-link:hover,
+  .community-link:focus-visible { color: var(--gold-bright); }
+
+  /* ---------- Affiliates ---------- */
+
+  .affiliates { margin-top: 32px; }
+  .affiliate-row {
+    display: flex;
+    gap: 22px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 18px;
+  }
+  .affiliate-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 76px;
+    text-decoration: none;
+    border-radius: 12px;
+    opacity: 0;
+    animation: bubbleIn 0.5s ease forwards;
+  }
+  .affiliate-item:nth-child(1) { animation-delay: 0.05s; }
+  .affiliate-item:nth-child(2) { animation-delay: 0.12s; }
+  .affiliate-item:nth-child(3) { animation-delay: 0.19s; }
+  .affiliate-item:nth-child(4) { animation-delay: 0.26s; }
+  .affiliate-item:nth-child(5) { animation-delay: 0.33s; }
+  .affiliate-item:nth-child(6) { animation-delay: 0.40s; }
+  @keyframes bubbleIn {
+    from { opacity: 0; transform: translateY(6px) scale(0.9); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .affiliate-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.03);
+    border: 2px solid var(--gold-dim);
+    color: var(--gold-bright);
+    transition: transform 0.25s cubic-bezier(0.22,1,0.36,1), box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+  .affiliate-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .affiliate-caption {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.01em;
+    color: var(--text-dim);
+    text-align: center;
+    line-height: 1.3;
+    transition: color 0.25s ease;
+  }
+  .affiliate-item:hover .affiliate-icon,
+  .affiliate-item:focus-visible .affiliate-icon {
+    transform: translateY(-5px) scale(1.08);
+    border-color: var(--gold);
+    box-shadow: 0 10px 26px rgba(242,213,114,0.3);
+  }
+  .affiliate-item:hover .affiliate-caption,
+  .affiliate-item:focus-visible .affiliate-caption { color: var(--gold-bright); }
+  .affiliate-item:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 4px; }
+  .affiliate-icon.tier-gold   { border-color: var(--gold-bright); box-shadow: 0 0 14px rgba(242,213,114,0.22); }
+  .affiliate-icon.tier-silver { border-color: var(--silver); }
+  .affiliate-icon.tier-bronze { border-color: var(--bronze); }
+
+  .section-label {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 12px;
     letter-spacing: 0.1em;
@@ -188,28 +322,6 @@
     margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
-  }
-  .ledger-list {
-    display: flex;
-    flex-direction: column;
-    border-top: 1px solid rgba(255,255,255,0.06);
-  }
-  .ledger-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 2px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    font-size: 14px;
-    animation: rowIn 0.5s ease;
-  }
-  .ledger-row .name { color: var(--text); display: flex; align-items: center; gap: 8px; }
-  .ledger-row .name::before { content: '🪙'; font-size: 12px; }
-  .empty-state { font-size: 14px; color: var(--text-dim); padding: 16px 2px; }
-
-  @keyframes rowIn {
-    from { opacity: 0; transform: translateY(-4px); }
-    to   { opacity: 1; transform: translateY(0); }
   }
 
   .toast {
@@ -233,13 +345,16 @@
 
   @media (max-width: 480px) {
     .stage { padding: 36px 20px 28px; }
-    .jar-wrap { width: 190px; height: 240px; }
+    .mug-wrap { width: 190px; height: 240px; }
     .support-row { flex-direction: column; align-items: stretch; }
     .tip-btn { width: 100%; }
+    .affiliate-item { width: 64px; }
+    .affiliate-icon { width: 50px; height: 50px; font-size: 19px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .ledger-row, .jar-glow, .coin, .tip-btn { animation: none !important; transition: none !important; }
+    .stage, .mug-glow, .steam, .puff, .tip-btn, .live-dot,
+    .affiliate-item, .mug-svg.clink { animation: none !important; transition: none !important; opacity: 1 !important; }
   }
 </style>
 </head>
@@ -248,31 +363,20 @@
 <div class="stage">
   <span class="br-tr"></span><span class="br-bl"></span>
 
-  <p class="eyebrow">SUPPORT THE PROJECT</p>
-  <p class="headline">every coin below is a real tip, live</p>
+  <p class="eyebrow">OFFICIAL TIP TRACKER</p>
+  <p class="headline">every drop below is a real tip, live</p>
+  <p class="live-badge"><span class="live-dot"></span><span id="onlineCount">–</span>&nbsp;here right now</p>
 
-  <div class="jar-wrap" id="jarWrap">
-    <div class="jar-glow"></div>
-    <svg class="jar-svg" viewBox="0 0 240 300" xmlns="http://www.w3.org/2000/svg">
+  <div class="mug-wrap" id="mugWrap">
+    <div class="mug-glow"></div>
+    <svg class="mug-svg" viewBox="0 0 240 300" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <clipPath id="jarClip">
-          <path d="M70,40
-                   Q70,20 90,20
-                   L150,20
-                   Q170,20 170,40
-                   L172,60
-                   Q210,80 210,150
-                   L210,240
-                   Q210,280 170,280
-                   L70,280
-                   Q30,280 30,240
-                   L30,150
-                   Q30,80 68,60
-                   Z" />
+        <clipPath id="mugClip">
+          <path d="M58,60 L182,60 L182,256 Q182,274 164,274 L76,274 Q58,274 58,256 Z" />
         </clipPath>
-        <linearGradient id="liquidGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#f2d572" />
-          <stop offset="100%" stop-color="#9a7b1f" />
+        <linearGradient id="coffeeGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#7a4a26" />
+          <stop offset="100%" stop-color="#2e1a0d" />
         </linearGradient>
         <linearGradient id="glassGrad" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stop-color="rgba(255,255,255,0.10)" />
@@ -280,46 +384,50 @@
         </linearGradient>
       </defs>
 
-      <g clip-path="url(#jarClip)">
-        <rect id="liquidRect" x="20" y="280" width="200" height="0" fill="url(#liquidGrad)" />
-        <path id="liquidWave" d="M20,280 Q60,272 120,280 T220,280 V300 H20 Z" fill="url(#liquidGrad)" opacity="0.9" />
+      <!-- handle, drawn behind the glass body -->
+      <path d="M182,106 Q224,106 224,150 Q224,194 182,194" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="20" stroke-linecap="round" />
+      <path d="M182,106 Q224,106 224,150 Q224,194 182,194" fill="none" stroke="var(--glass-stroke)" stroke-width="3" stroke-linecap="round" />
+
+      <g clip-path="url(#mugClip)">
+        <rect id="liquidRect" x="58" y="274" width="124" height="0" fill="url(#coffeeGrad)" />
+        <path id="liquidWave" d="M58,274 Q83,266 120,274 T182,274 V300 H58 Z" fill="url(#coffeeGrad)" opacity="0.92" />
       </g>
 
-      <path d="M70,40
-               Q70,20 90,20
-               L150,20
-               Q170,20 170,40
-               L172,60
-               Q210,80 210,150
-               L210,240
-               Q210,280 170,280
-               L70,280
-               Q30,280 30,240
-               L30,150
-               Q30,80 68,60
-               Z"
+      <path d="M58,60 L182,60 L182,256 Q182,274 164,274 L76,274 Q58,274 58,256 Z"
             fill="url(#glassGrad)" stroke="var(--glass-stroke)" stroke-width="2" />
 
-      <rect x="66" y="10" width="108" height="16" rx="4" fill="none" stroke="var(--gold-dim)" stroke-width="2" />
-      <rect x="72" y="4" width="96" height="10" rx="3" fill="none" stroke="var(--gold-dim)" stroke-width="2" />
-
-      <path d="M48,90 Q46,160 48,250" stroke="rgba(255,255,255,0.15)" stroke-width="3" fill="none" stroke-linecap="round" />
+      <rect x="52" y="50" width="136" height="14" rx="4" fill="none" stroke="var(--gold-dim)" stroke-width="2" />
     </svg>
   </div>
 
   <div class="support-row">
-    <a class="tip-btn primary" href="https://ko-fi.com/goonolympics" target="_blank" rel="noopener noreferrer">Tip on Ko-fi ☕</a>
-    <a class="tip-btn secondary" href="https://www.patreon.com/goonolympics" target="_blank" rel="noopener noreferrer">Join on Patreon 🎗</a>
+    <a class="tip-btn primary" href="https://ko-fi.com/goonolympics" target="_blank" rel="noopener noreferrer" data-track="kofi">Tip on Ko-fi ☕</a>
+    <a class="tip-btn secondary" href="https://www.patreon.com/goonolympics" target="_blank" rel="noopener noreferrer" data-track="patreon">Join on Patreon 🎗</a>
   </div>
+  <a class="community-link" href="https://discord.gg/Xckf7pXPK" target="_blank" rel="noopener noreferrer" data-track="discord">💬 Join the Discord</a>
 
-  <div class="ledger">
-    <div class="ledger-label">
-      <span>RECENT SUPPORT</span>
-      <span id="supporterCount">0 total</span>
+  <div class="affiliates">
+    <div class="section-label"><span>OFFICIAL SPONSORS</span></div>
+    <!-- AFFILIATE-ROW-START: generate this block with affiliate-builder.html and paste it in here -->
+    <div class="affiliate-row">
+      <a class="affiliate-item" href="https://t.mbmbchw.link/409352/6224/0?po=6533&aff_sub5=SF_006OG000004lmDN" target="_blank" rel="noopener noreferrer" aria-label="Need A Partner? — opens in a new tab" data-track="Need A Partner?">
+        <span class="affiliate-icon tier-gold">🔗</span>
+        <span class="affiliate-caption">Need A Hand?</span>
+      </a>
+      <a class="affiliate-item" href="https://t.camsk5.com/409352/3688/0?po=6533&aff_sub5=SF_006OG000004lmDN" target="_blank" rel="noopener noreferrer" aria-label="Wanna Chat? — opens in a new tab" data-track="Wanna Chat?">
+        <span class="affiliate-icon tier-silver">🔗</span>
+        <span class="affiliate-caption">You Look Lonely</span>
+      </a>
+      <a class="affiliate-item" href="https://www.lovense.com/r/yw6pqm" target="_blank" rel="noopener noreferrer" aria-label="Toys N Stuff — opens in a new tab" data-track="Toys N Stuff">
+        <span class="affiliate-icon tier-bronze">🔗</span>
+        <span class="affiliate-caption">Toys N Stuff</span>
+      </a>
+      <a class="affiliate-item" href="https://track.aftrk3.com/38df6f12-f103-452f-9386-22bba88ec8ef?ats=eyJhIjoxNzM4NzkzLCJjIjo2NDUwMDIyNywibiI6MzcsInMiOjczNSwiZSI6MTEwNTIsInAiOjMxN30=&aff_token=Ly0qNiA7IDgu" target="_blank" rel="noopener noreferrer" aria-label="For Your Wildest Fantasies — opens in a new tab" data-track="For Your Wildest Fantasies">
+        <span class="affiliate-icon">🔗</span>
+        <span class="affiliate-caption">For Your Wildest Fantasies</span>
+      </a>
     </div>
-    <div class="ledger-list" id="ledgerList">
-      <div class="empty-state">No entries yet — be the first.</div>
-    </div>
+    <!-- AFFILIATE-ROW-END -->
   </div>
 </div>
 
@@ -328,50 +436,57 @@
 <script>
   let currentTotal = 0;
   let firstLoad = true;
-  const JAR_TOP = 20, JAR_BOTTOM = 280;
+  const MUG_TOP = 62, MUG_BOTTOM = 274;
 
   function setLiquidLevel(pct) {
-    const y = JAR_BOTTOM - (JAR_BOTTOM - JAR_TOP) * Math.max(0, Math.min(1, pct));
-    const h = JAR_BOTTOM - y;
+    const y = MUG_BOTTOM - (MUG_BOTTOM - MUG_TOP) * Math.max(0, Math.min(1, pct));
+    const h = MUG_BOTTOM - y;
     document.getElementById('liquidRect').setAttribute('y', y);
     document.getElementById('liquidRect').setAttribute('height', h);
     document.getElementById('liquidWave').setAttribute(
-      'd', `M20,${y} Q60,${y - 8} 120,${y} T220,${y} V300 H20 Z`
+      'd', `M58,${y} Q83,${y - 8} 120,${y} T182,${y} V300 H58 Z`
     );
   }
 
-  function spawnDriftCoin() {
-    const jar = document.getElementById('jarWrap');
-    const coin = document.createElement('div');
-    coin.className = 'coin';
-    coin.textContent = '🪙';
-    coin.style.left = (30 + Math.random() * 60) + '%';
-    coin.style.top = '0px';
-    coin.style.animation = `coinDrift ${2.4 + Math.random()}s ease-in forwards`;
-    jar.appendChild(coin);
-    setTimeout(() => coin.remove(), 3600);
+  function spawnSteam() {
+    const wrap = document.getElementById('mugWrap');
+    const wisp = document.createElement('div');
+    wisp.className = 'steam';
+    const w = 8 + Math.random() * 5;
+    const h = 26 + Math.random() * 14;
+    wisp.style.width = w + 'px';
+    wisp.style.height = h + 'px';
+    wisp.style.left = (44 + Math.random() * 14) + '%';
+    wisp.style.bottom = '80%';
+    wisp.style.animation = `steamRise ${3 + Math.random() * 1.6}s ease-out forwards`;
+    wrap.appendChild(wisp);
+    setTimeout(() => wisp.remove(), 5000);
   }
-  setInterval(spawnDriftCoin, 2600);
-  spawnDriftCoin();
+  setInterval(spawnSteam, 1500);
+  spawnSteam();
 
-  function burstCoins(count) {
-    const jar = document.getElementById('jarWrap');
+  function burstSteam(count) {
+    const wrap = document.getElementById('mugWrap');
     for (let i = 0; i < count; i++) {
-      const coin = document.createElement('div');
-      coin.className = 'coin';
-      coin.textContent = '🪙';
-      coin.style.left = (45 + Math.random() * 10) + '%';
-      coin.style.top = '55%';
+      const p = document.createElement('div');
+      p.className = 'puff';
+      const size = 3 + Math.random() * 5;
+      p.style.width = size + 'px';
+      p.style.height = size + 'px';
+      p.style.left = (44 + Math.random() * 12) + '%';
+      p.style.top = '20%';
       const angle = (Math.random() * Math.PI) - Math.PI / 2 - Math.PI / 4;
-      const dist = 80 + Math.random() * 90;
+      const dist = 60 + Math.random() * 70;
       const dx = Math.cos(angle) * dist;
       const dy = Math.sin(angle) * dist - 40;
-      coin.style.setProperty('--burst-end', `translate(${dx}px, ${dy}px)`);
-      coin.style.setProperty('--burst-rot', `${(Math.random() * 400 - 200)}deg`);
-      coin.style.animation = `coinBurst ${0.9 + Math.random() * 0.5}s cubic-bezier(0.22,1,0.36,1) forwards`;
-      jar.appendChild(coin);
-      setTimeout(() => coin.remove(), 1600);
+      p.style.setProperty('--burst-end', `translate(${dx}px, ${dy}px)`);
+      p.style.animation = `puffBurst ${0.8 + Math.random() * 0.5}s cubic-bezier(0.22,1,0.36,1) forwards`;
+      wrap.appendChild(p);
+      setTimeout(() => p.remove(), 1500);
     }
+    const svg = document.querySelector('.mug-svg');
+    svg.classList.add('clink');
+    setTimeout(() => svg.classList.remove('clink'), 450);
   }
 
   function showToast(text) {
@@ -395,36 +510,60 @@
     setLiquidLevel(data.pct);
 
     if (isNewTip) {
-      burstCoins(14);
+      burstSteam(14);
       const latest = data.recent && data.recent[0];
       if (latest) {
-        showToast(`🔥 ${latest.name || 'Anonymous'} just showed some love`);
+        showToast(`☕ ${latest.name || 'Anonymous'} just bought a coffee`);
       }
     }
 
     currentTotal = data.total;
     firstLoad = false;
 
-    document.getElementById('supporterCount').textContent = data.supporterCount + ' total';
-
-    const list = document.getElementById('ledgerList');
-    if (data.recent && data.recent.length) {
-      list.innerHTML = data.recent.map(r => `
-        <div class="ledger-row">
-          <span class="name">${escapeHtml(r.name || 'Anonymous')}</span>
-        </div>
-      `).join('');
-    }
-  }
-
-  function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
+    const onlineEl = document.getElementById('onlineCount');
+    if (onlineEl) onlineEl.textContent = data.online ?? '–';
   }
 
   refresh();
   setInterval(refresh, 5000);
+
+  // ---------- Live presence ----------
+  const clientId = (() => {
+    let id = sessionStorage.getItem('gc_client_id');
+    if (!id) {
+      id = Math.random().toString(36).slice(2) + Date.now().toString(36);
+      sessionStorage.setItem('gc_client_id', id);
+    }
+    return id;
+  })();
+
+  function heartbeat() {
+    fetch('/api/heartbeat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ clientId }),
+    }).catch(() => {});
+  }
+  heartbeat();
+  setInterval(heartbeat, 10000);
+
+  // ---------- Click tracking ----------
+  function trackClick(linkId) {
+    const payload = JSON.stringify({ linkId });
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon('/api/track-click', new Blob([payload], { type: 'application/json' }));
+    } else {
+      fetch('/api/track-click', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload,
+        keepalive: true,
+      }).catch(() => {});
+    }
+  }
+  document.querySelectorAll('[data-track]').forEach(el => {
+    el.addEventListener('click', () => trackClick(el.dataset.track));
+  });
 </script>
 
 </body>
