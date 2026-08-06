@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stats — Goon Olympics</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  :root {
+    --bg-top: #0a0a0d;
+    --bg-bottom: #131318;
+    --gold: #d4af37;
+    --gold-bright: #f2d572;
+    --gold-dim: rgba(212, 175, 55, 0.35);
+    --text: #eae6da;
+    --text-dim: #8a8578;
+    --live: #6fbf8f;
+    --panel: rgba(255,255,255,0.03);
+    --panel-border: rgba(234,230,218,0.14);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+    color: var(--text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    padding: 40px 20px 80px;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 0 0 24px; }
+
+  .gate {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+  .gate input {
+    flex: 1;
+    padding: 11px 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+  }
+  .gate input:focus { outline: none; border-color: var(--gold); }
+  .gate button {
+    padding: 11px 22px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--bg-top);
+    background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .error { color: #e08a8a; font-size: 13.5px; margin: -18px 0 24px; display: none; }
+  .error.show { display: block; }
+
+  .dashboard { display: none; }
+  .dashboard.show { display: block; }
+
+  .stat-row { display: flex; gap: 14px; margin-bottom: 28px; flex-wrap: wrap; }
+  .stat-card {
+    flex: 1;
+    min-width: 130px;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .stat-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .stat-value {
+    font-size: 26px;
+    font-weight: 700;
+    margin-top: 6px;
+    color: var(--gold-bright);
+  }
+  .live-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--live);
+    box-shadow: 0 0 6px rgba(111,191,143,0.7);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; transform: scale(0.85); }
+    50% { opacity: 1; transform: scale(1.15); }
+  }
+
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+  .click-table { display: flex; flex-direction: column; border-top: 1px solid rgba(255,255,255,0.06); }
+  .click-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 11px 2px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 14px;
+  }
+  .click-row .name { color: var(--text); }
+  .click-row .count { color: var(--gold-bright); font-family: 'IBM Plex Mono', monospace; }
+  .empty-state { color: var(--text-dim); font-size: 13.5px; padding: 16px 2px; }
+  .refresh-note { color: var(--text-dim); font-size: 12px; margin-top: 20px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Live stats</h1>
+
+  <div class="gate" id="gate">
+    <input type="password" id="keyInput" placeholder="Enter your STATS_KEY">
+    <button id="unlockBtn">Unlock</button>
+  </div>
+  <p class="error" id="errorMsg">Wrong key, or STATS_KEY isn't set on the server yet.</p>
+
+  <div class="dashboard" id="dashboard">
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-label"><span class="live-dot"></span>ONLINE NOW</div>
+        <div class="stat-value" id="onlineVal">–</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">TOTAL CLICKS</div>
+        <div class="stat-value" id="clicksVal">–</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">TOTAL TIPS</div>
+        <div class="stat-value" id="tipsVal">–</div>
+      </div>
+    </div>
+
+    <p class="section-label">CLICKS BY LINK</p>
+    <div class="click-table" id="clickTable">
+      <div class="empty-state">No clicks recorded yet.</div>
+    </div>
+    <p class="refresh-note">Refreshes automatically every few seconds — leave this tab open.</p>
+  </div>
+</div>
+
+<script>
+  let statsKey = localStorage.getItem('gc_stats_key') || '';
+  let pollTimer = null;
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  async function fetchStats() {
+    try {
+      const res = await fetch(`/api/admin-stats?key=${encodeURIComponent(statsKey)}`, { cache: 'no-store' });
+      if (!res.ok) throw new Error('unauthorized');
+      const data = await res.json();
+      render(data);
+      document.getElementById('errorMsg').classList.remove('show');
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('dashboard').classList.add('show');
+    } catch (err) {
+      if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+      document.getElementById('dashboard').classList.remove('show');
+      document.getElementById('gate').style.display = 'flex';
+      document.getElementById('errorMsg').classList.add('show');
+      localStorage.removeItem('gc_stats_key');
+    }
+  }
+
+  function render(data) {
+    document.getElementById('onlineVal').textContent = data.online;
+    document.getElementById('clicksVal').textContent = data.totalClicks;
+    document.getElementById('tipsVal').textContent = data.totalTips;
+
+    const table = document.getElementById('clickTable');
+    if (data.clicksByLink && data.clicksByLink.length) {
+      table.innerHTML = data.clicksByLink.map(row => `
+        <div class="click-row">
+          <span class="name">${escapeHtml(row.link_id)}</span>
+          <span class="count">${row.count}</span>
+        </div>
+      `).join('');
+    } else {
+      table.innerHTML = '<div class="empty-state">No clicks recorded yet.</div>';
+    }
+  }
+
+  function unlock() {
+    const val = document.getElementById('keyInput').value.trim();
+    if (!val) return;
+    statsKey = val;
+    localStorage.setItem('gc_stats_key', val);
+    fetchStats();
+    if (!pollTimer) pollTimer = setInterval(fetchStats, 5000);
+  }
+
+  document.getElementById('unlockBtn').addEventListener('click', unlock);
+  document.getElementById('keyInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') unlock();
+  });
+
+  if (statsKey) {
+    document.getElementById('keyInput').value = statsKey;
+    fetchStats();
+    pollTimer = setInterval(fetchStats, 5000);
+  }
+</script>
+</body>
+</html>
