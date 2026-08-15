@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Support — Goon Olympics</title>
 
-<meta property="og:title" content="Tip on Ko-fi ☕ — Goon Olympics">
-<meta property="og:description" content="Tip Jar">
+<meta property="og:title" content="Support — Goon Olympics">
+<meta property="og:description" content="Official Praetorian Guard">
 <meta property="og:image" content="/thermometer.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="/thermometer.png">
@@ -22,9 +22,6 @@
     --gold-glow: rgba(242, 213, 114, 0.5);
     --text: #eae6da;
     --text-dim: #8a8578;
-    --steam: #f7f1e3;
-    --steam-dim: rgba(247, 241, 227, 0.4);
-    --glass-stroke: rgba(234, 230, 218, 0.28);
     --silver: #c9d0d6;
     --bronze: #c9884a;
     --live: #6fbf8f;
@@ -123,20 +120,20 @@
     50%      { opacity: 1; transform: scale(1.15); }
   }
 
-  /* ---------- Mug ---------- */
+  /* ---------- Medallion ---------- */
 
-  .mug-wrap {
+  .medallion-wrap {
     position: relative;
-    width: 240px;
+    width: 225px;
     height: 300px;
     margin: 0 auto 8px;
   }
 
-  .mug-glow {
+  .medallion-glow {
     position: absolute;
-    inset: -40px;
+    inset: -20px -30px;
     border-radius: 50%;
-    background: radial-gradient(circle, var(--gold-glow) 0%, transparent 65%);
+    background: radial-gradient(circle at 50% 65%, var(--gold-glow) 0%, transparent 65%);
     opacity: 0.35;
     filter: blur(10px);
     animation: pulseGlow 4s ease-in-out infinite;
@@ -147,40 +144,37 @@
     50%      { opacity: 0.45; transform: scale(1.05); }
   }
 
-  svg.mug-svg { position: relative; width: 100%; height: 100%; display: block; transform-origin: 50% 85%; }
+  svg.medallion-svg { position: relative; width: 100%; height: 100%; display: block; overflow: visible; }
 
-  @keyframes clinkWiggle {
-    0%, 100% { transform: rotate(0deg); }
-    25%      { transform: rotate(-3deg); }
-    60%      { transform: rotate(2.5deg); }
-    85%      { transform: rotate(-1deg); }
+  .medal-swing {
+    transform-origin: 150px 4px;
+    animation: medalSway 6s ease-in-out infinite;
   }
-  svg.mug-svg.clink { animation: clinkWiggle 0.45s ease; }
+  @keyframes medalSway {
+    0%, 100% { transform: rotate(-2.5deg); }
+    50%      { transform: rotate(2.5deg); }
+  }
 
-  .steam {
+  .medal-shine {
+    animation: shineSweep 5s ease-in-out infinite;
+  }
+  @keyframes shineSweep {
+    0%, 15%  { transform: translate(-130px, -60px) rotate(22deg); }
+    55%, 100% { transform: translate(130px, 60px) rotate(22deg); }
+  }
+
+  .ember {
     position: absolute;
     border-radius: 50%;
-    background: linear-gradient(to top, var(--steam-dim), transparent);
-    filter: blur(2.5px);
+    background: radial-gradient(circle at 30% 30%, var(--gold-bright), rgba(242,213,114,0));
     pointer-events: none;
     will-change: transform, opacity;
   }
-  @keyframes steamRise {
-    0%   { transform: translateY(0) translateX(0) scale(0.7) rotate(0deg); opacity: 0; }
-    18%  { opacity: 0.6; }
-    55%  { transform: translateY(-46px) translateX(6px) scale(1.15) rotate(6deg); opacity: 0.4; }
-    100% { transform: translateY(-92px) translateX(-5px) scale(1.4) rotate(-5deg); opacity: 0; }
-  }
-
-  .puff {
-    position: absolute;
-    border-radius: 50%;
-    background: var(--steam);
-    pointer-events: none;
-  }
-  @keyframes puffBurst {
-    0%   { transform: translate(0,0) scale(1); opacity: 1; }
-    100% { transform: var(--burst-end) scale(0.5); opacity: 0; }
+  @keyframes emberDrift {
+    0%   { transform: translateY(0) scale(0.6); opacity: 0; }
+    15%  { opacity: 0.9; }
+    80%  { opacity: 0.5; }
+    100% { transform: translateY(-70px) scale(1); opacity: 0; }
   }
 
   .support-row {
@@ -231,20 +225,6 @@
     outline: 2px solid var(--gold-bright);
     outline-offset: 3px;
   }
-
-  .community-link {
-    display: block;
-    text-align: center;
-    margin-top: 18px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12.5px;
-    letter-spacing: 0.03em;
-    color: var(--text-dim);
-    text-decoration: none;
-    transition: color 0.2s ease;
-  }
-  .community-link:hover,
-  .community-link:focus-visible { color: var(--gold-bright); }
 
   /* ---------- Affiliates ---------- */
 
@@ -324,28 +304,9 @@
     justify-content: space-between;
   }
 
-  .toast {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translate(-50%, -140%);
-    background: rgba(15,15,18,0.92);
-    border: 1.5px solid var(--gold-dim);
-    color: var(--text);
-    padding: 12px 22px;
-    border-radius: 999px;
-    font-size: 14px;
-    font-family: 'IBM Plex Mono', monospace;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-    z-index: 50;
-    white-space: nowrap;
-  }
-  .toast.show { transform: translate(-50%, 0); }
-
   @media (max-width: 480px) {
     .stage { padding: 36px 20px 28px; }
-    .mug-wrap { width: 190px; height: 240px; }
+    .medallion-wrap { width: 165px; height: 220px; }
     .support-row { flex-direction: column; align-items: stretch; }
     .tip-btn { width: 100%; }
     .affiliate-item { width: 64px; }
@@ -353,8 +314,8 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .stage, .mug-glow, .steam, .puff, .tip-btn, .live-dot,
-    .affiliate-item, .mug-svg.clink { animation: none !important; transition: none !important; opacity: 1 !important; }
+    .stage, .medallion-glow, .ember, .tip-btn, .live-dot, .medal-swing, .medal-shine,
+    .affiliate-item { animation: none !important; transition: none !important; opacity: 1 !important; }
   }
 </style>
 </head>
@@ -363,48 +324,161 @@
 <div class="stage">
   <span class="br-tr"></span><span class="br-bl"></span>
 
-  <p class="eyebrow">OFFICIAL TIP JAR</p>
-  <p class="headline">help keep the games running</p>
-  <p class="live-badge"><span class="live-dot"></span><span id="onlineCount">–</span>&nbsp;</p>
+  <p class="eyebrow">OFFICIAL PRAETORIAN GUARD</p>
+  <p class="headline">Join Us.</p>
+  <p class="live-badge"><span class="live-dot"></span><span id="onlineCount">–</span>&nbsp;here right now</p>
 
-  <div class="mug-wrap" id="mugWrap">
-    <div class="mug-glow"></div>
-    <svg class="mug-svg" viewBox="0 0 240 300" xmlns="http://www.w3.org/2000/svg">
+  <div class="medallion-wrap" id="medallionWrap">
+    <div class="medallion-glow"></div>
+    <svg class="medallion-svg" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <clipPath id="mugClip">
-          <path d="M58,60 L182,60 L182,256 Q182,274 164,274 L76,274 Q58,274 58,256 Z" />
-        </clipPath>
-        <linearGradient id="coffeeGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#7a4a26" />
-          <stop offset="100%" stop-color="#2e1a0d" />
+        <linearGradient id="ribbonL" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="var(--gold)" />
+          <stop offset="100%" stop-color="var(--gold-bright)" />
         </linearGradient>
-        <linearGradient id="glassGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="rgba(255,255,255,0.10)" />
-          <stop offset="100%" stop-color="rgba(255,255,255,0.02)" />
+        <linearGradient id="ribbonR" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="var(--gold-bright)" />
+          <stop offset="100%" stop-color="#8a6a22" />
         </linearGradient>
+        <radialGradient id="discFace" cx="35%" cy="30%" r="75%">
+          <stop offset="0%" stop-color="#fbe9a8" />
+          <stop offset="45%" stop-color="var(--gold-bright)" />
+          <stop offset="100%" stop-color="#7a5c18" />
+        </radialGradient>
+        <linearGradient id="rimGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#fbe9a8" />
+          <stop offset="100%" stop-color="#6b4f14" />
+        </linearGradient>
+        <linearGradient id="bannerGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#8a6a22" />
+          <stop offset="100%" stop-color="#4a3610" />
+        </linearGradient>
+        <linearGradient id="shineGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#fff" stop-opacity="0" />
+          <stop offset="50%" stop-color="#fff" stop-opacity="0.55" />
+          <stop offset="100%" stop-color="#fff" stop-opacity="0" />
+        </linearGradient>
+        <path id="textRingPath" d="M 150,172 A 78,78 0 1,1 149,172" fill="none" />
+        <clipPath id="discClip"><circle cx="150" cy="250" r="100" /></clipPath>
       </defs>
 
-      <!-- handle, drawn behind the glass body -->
-      <path d="M182,106 Q224,106 224,150 Q224,194 182,194" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="20" stroke-linecap="round" />
-      <path d="M182,106 Q224,106 224,150 Q224,194 182,194" fill="none" stroke="var(--glass-stroke)" stroke-width="3" stroke-linecap="round" />
+      <g class="medal-swing">
+        <path d="M118,0 L133,0 L150,148 Z" fill="url(#ribbonL)" />
+        <path d="M182,0 L167,0 L150,148 Z" fill="url(#ribbonR)" />
+        <line x1="118" y1="0" x2="133" y2="0" stroke="#6b4f14" stroke-width="1" opacity="0.5" />
+        <circle cx="150" cy="150" r="9" fill="none" stroke="url(#rimGrad)" stroke-width="4" />
 
-      <g clip-path="url(#mugClip)">
-        <rect id="liquidRect" x="58" y="274" width="124" height="0" fill="url(#coffeeGrad)" />
-        <path id="liquidWave" d="M58,274 Q83,266 120,274 T182,274 V300 H58 Z" fill="url(#coffeeGrad)" opacity="0.92" />
+        <circle cx="150" cy="250" r="120" fill="none" stroke="var(--gold-dim)" stroke-width="1" opacity="0.4" />
+        <g stroke="url(#rimGrad)" stroke-width="1.1" opacity="0.8">
+        <line x1="255.0" y1="250.0" x2="263.0" y2="250.0"/>
+        <line x1="254.7" y1="258.2" x2="262.7" y2="258.9"/>
+        <line x1="253.7" y1="266.4" x2="261.6" y2="267.7"/>
+        <line x1="252.1" y1="274.5" x2="259.9" y2="276.4"/>
+        <line x1="249.9" y1="282.4" x2="257.5" y2="284.9"/>
+        <line x1="247.0" y1="290.2" x2="254.4" y2="293.2"/>
+        <line x1="243.6" y1="297.7" x2="250.7" y2="301.3"/>
+        <line x1="239.5" y1="304.9" x2="246.3" y2="309.0"/>
+        <line x1="234.9" y1="311.7" x2="241.4" y2="316.4"/>
+        <line x1="229.8" y1="318.2" x2="235.9" y2="323.4"/>
+        <line x1="224.2" y1="324.2" x2="229.9" y2="329.9"/>
+        <line x1="218.2" y1="329.8" x2="223.4" y2="335.9"/>
+        <line x1="211.7" y1="334.9" x2="216.4" y2="341.4"/>
+        <line x1="204.9" y1="339.5" x2="209.0" y2="346.3"/>
+        <line x1="197.7" y1="343.6" x2="201.3" y2="350.7"/>
+        <line x1="190.2" y1="347.0" x2="193.2" y2="354.4"/>
+        <line x1="182.4" y1="349.9" x2="184.9" y2="357.5"/>
+        <line x1="174.5" y1="352.1" x2="176.4" y2="359.9"/>
+        <line x1="166.4" y1="353.7" x2="167.7" y2="361.6"/>
+        <line x1="158.2" y1="354.7" x2="158.9" y2="362.7"/>
+        <line x1="150.0" y1="355.0" x2="150.0" y2="363.0"/>
+        <line x1="141.8" y1="354.7" x2="141.1" y2="362.7"/>
+        <line x1="133.6" y1="353.7" x2="132.3" y2="361.6"/>
+        <line x1="125.5" y1="352.1" x2="123.6" y2="359.9"/>
+        <line x1="117.6" y1="349.9" x2="115.1" y2="357.5"/>
+        <line x1="109.8" y1="347.0" x2="106.8" y2="354.4"/>
+        <line x1="102.3" y1="343.6" x2="98.7" y2="350.7"/>
+        <line x1="95.1" y1="339.5" x2="91.0" y2="346.3"/>
+        <line x1="88.3" y1="334.9" x2="83.6" y2="341.4"/>
+        <line x1="81.8" y1="329.8" x2="76.6" y2="335.9"/>
+        <line x1="75.8" y1="324.2" x2="70.1" y2="329.9"/>
+        <line x1="70.2" y1="318.2" x2="64.1" y2="323.4"/>
+        <line x1="65.1" y1="311.7" x2="58.6" y2="316.4"/>
+        <line x1="60.5" y1="304.9" x2="53.7" y2="309.0"/>
+        <line x1="56.4" y1="297.7" x2="49.3" y2="301.3"/>
+        <line x1="53.0" y1="290.2" x2="45.6" y2="293.2"/>
+        <line x1="50.1" y1="282.4" x2="42.5" y2="284.9"/>
+        <line x1="47.9" y1="274.5" x2="40.1" y2="276.4"/>
+        <line x1="46.3" y1="266.4" x2="38.4" y2="267.7"/>
+        <line x1="45.3" y1="258.2" x2="37.3" y2="258.9"/>
+        <line x1="45.0" y1="250.0" x2="37.0" y2="250.0"/>
+        <line x1="45.3" y1="241.8" x2="37.3" y2="241.1"/>
+        <line x1="46.3" y1="233.6" x2="38.4" y2="232.3"/>
+        <line x1="47.9" y1="225.5" x2="40.1" y2="223.6"/>
+        <line x1="50.1" y1="217.6" x2="42.5" y2="215.1"/>
+        <line x1="53.0" y1="209.8" x2="45.6" y2="206.8"/>
+        <line x1="56.4" y1="202.3" x2="49.3" y2="198.7"/>
+        <line x1="60.5" y1="195.1" x2="53.7" y2="191.0"/>
+        <line x1="65.1" y1="188.3" x2="58.6" y2="183.6"/>
+        <line x1="70.2" y1="181.8" x2="64.1" y2="176.6"/>
+        <line x1="75.8" y1="175.8" x2="70.1" y2="170.1"/>
+        <line x1="81.8" y1="170.2" x2="76.6" y2="164.1"/>
+        <line x1="88.3" y1="165.1" x2="83.6" y2="158.6"/>
+        <line x1="95.1" y1="160.5" x2="91.0" y2="153.7"/>
+        <line x1="102.3" y1="156.4" x2="98.7" y2="149.3"/>
+        <line x1="109.8" y1="153.0" x2="106.8" y2="145.6"/>
+        <line x1="117.6" y1="150.1" x2="115.1" y2="142.5"/>
+        <line x1="125.5" y1="147.9" x2="123.6" y2="140.1"/>
+        <line x1="133.6" y1="146.3" x2="132.3" y2="138.4"/>
+        <line x1="141.8" y1="145.3" x2="141.1" y2="137.3"/>
+        <line x1="150.0" y1="145.0" x2="150.0" y2="137.0"/>
+        <line x1="158.2" y1="145.3" x2="158.9" y2="137.3"/>
+        <line x1="166.4" y1="146.3" x2="167.7" y2="138.4"/>
+        <line x1="174.5" y1="147.9" x2="176.4" y2="140.1"/>
+        <line x1="182.4" y1="150.1" x2="184.9" y2="142.5"/>
+        <line x1="190.2" y1="153.0" x2="193.2" y2="145.6"/>
+        <line x1="197.7" y1="156.4" x2="201.3" y2="149.3"/>
+        <line x1="204.9" y1="160.5" x2="209.0" y2="153.7"/>
+        <line x1="211.7" y1="165.1" x2="216.4" y2="158.6"/>
+        <line x1="218.2" y1="170.2" x2="223.4" y2="164.1"/>
+        <line x1="224.2" y1="175.8" x2="229.9" y2="170.1"/>
+        <line x1="229.8" y1="181.8" x2="235.9" y2="176.6"/>
+        <line x1="234.9" y1="188.3" x2="241.4" y2="183.6"/>
+        <line x1="239.5" y1="195.1" x2="246.3" y2="191.0"/>
+        <line x1="243.6" y1="202.3" x2="250.7" y2="198.7"/>
+        <line x1="247.0" y1="209.8" x2="254.4" y2="206.8"/>
+        <line x1="249.9" y1="217.6" x2="257.5" y2="215.1"/>
+        <line x1="252.1" y1="225.5" x2="259.9" y2="223.6"/>
+        <line x1="253.7" y1="233.6" x2="261.6" y2="232.3"/>
+        <line x1="254.7" y1="241.8" x2="262.7" y2="241.1"/>
+        </g>
+        <circle cx="150" cy="250" r="105" fill="none" stroke="#fbe9a8" stroke-width="1.5" opacity="0.7" />
+        <circle cx="150" cy="250" r="100" fill="url(#discFace)" stroke="url(#rimGrad)" stroke-width="5" />
+        <circle cx="150" cy="250" r="92" fill="none" stroke="#4a3610" stroke-width="1.5" opacity="0.6" />
+        <circle cx="150" cy="250" r="88" fill="rgba(0,0,0,0.18)" />
+
+        <text font-family="'IBM Plex Mono', monospace" font-size="10" letter-spacing="2.4" fill="#4a3610">
+          <textPath href="#textRingPath" startOffset="50%" text-anchor="middle">GOON OLYMPICS &#183; EST. MMXXVI &#183;</textPath>
+        </text>
+
+
+        <path d="M150.0,169.0 L160.6,200.4 L193.7,200.8 L167.1,220.6 L177.0,252.2 L150.0,233.0 L123.0,252.2 L132.9,220.6 L106.3,200.8 L139.4,200.4 Z" fill="#4a3610" transform="translate(2,3)" opacity="0.55" />
+        <path d="M150.0,169.0 L160.6,200.4 L193.7,200.8 L167.1,220.6 L177.0,252.2 L150.0,233.0 L123.0,252.2 L132.9,220.6 L106.3,200.8 L139.4,200.4 Z" fill="url(#discFace)" stroke="#6b4f14" stroke-width="1.5" />
+        <path d="M150.0,185.0 L156.5,206.1 L178.5,205.7 L160.5,218.4 L167.6,239.3 L150.0,226.0 L132.4,239.3 L139.5,218.4 L121.5,205.7 L143.5,206.1 Z" fill="#fff4d6" opacity="0.45" />
+
+        <path d="M65,308 L82,299 Q150,289 218,299 L235,308 L219,321 Q150,312 81,321 Z" fill="url(#bannerGrad)" stroke="#2e2208" stroke-width="1" />
+        <text x="150" y="311" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="12" font-weight="700" letter-spacing="1.5" fill="var(--gold-bright)">PRAETORIAN</text>
+
+        <g clip-path="url(#discClip)">
+          <rect class="medal-shine" x="-20" y="150" width="45" height="220" fill="url(#shineGrad)" />
+        </g>
       </g>
-
-      <path d="M58,60 L182,60 L182,256 Q182,274 164,274 L76,274 Q58,274 58,256 Z"
-            fill="url(#glassGrad)" stroke="var(--glass-stroke)" stroke-width="2" />
-
-      <rect x="52" y="50" width="136" height="14" rx="4" fill="none" stroke="var(--gold-dim)" stroke-width="2" />
     </svg>
   </div>
 
   <div class="support-row">
-    <a class="tip-btn primary" href="https://ko-fi.com/goonolympics" target="_blank" rel="noopener noreferrer" data-track="kofi">Tip on Ko-fi ☕</a>
-    <a class="tip-btn secondary" href="https://www.patreon.com/goonolympics" target="_blank" rel="noopener noreferrer" data-track="patreon">Join on Patreon 🎗</a>
+    <a class="tip-btn primary" href="https://www.patreon.com/goonolympics" target="_blank" rel="noopener noreferrer" data-track="patreon">Join on Patreon 🎗</a>
+    <a class="tip-btn secondary" href="https://discord.gg/Xckf7pXPK" target="_blank" rel="noopener noreferrer" data-track="discord">Join the Discord 💬</a>
   </div>
-  <a class="community-link" href="https://discord.com/invite/Z9vEGRWkc" target="_blank" rel="noopener noreferrer" data-track="discord">💬 Join the Discord</a>
 
   <div class="affiliates">
     <div class="section-label"><span>OFFICIAL SPONSORS</span></div>
@@ -435,102 +509,7 @@
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
-
 <script>
-  let currentTotal = 0;
-  let firstLoad = true;
-  const MUG_TOP = 62, MUG_BOTTOM = 274;
-
-  function setLiquidLevel(pct) {
-    const y = MUG_BOTTOM - (MUG_BOTTOM - MUG_TOP) * Math.max(0, Math.min(1, pct));
-    const h = MUG_BOTTOM - y;
-    document.getElementById('liquidRect').setAttribute('y', y);
-    document.getElementById('liquidRect').setAttribute('height', h);
-    document.getElementById('liquidWave').setAttribute(
-      'd', `M58,${y} Q83,${y - 8} 120,${y} T182,${y} V300 H58 Z`
-    );
-  }
-
-  function spawnSteam() {
-    const wrap = document.getElementById('mugWrap');
-    const wisp = document.createElement('div');
-    wisp.className = 'steam';
-    const w = 8 + Math.random() * 5;
-    const h = 26 + Math.random() * 14;
-    wisp.style.width = w + 'px';
-    wisp.style.height = h + 'px';
-    wisp.style.left = (44 + Math.random() * 14) + '%';
-    wisp.style.bottom = '80%';
-    wisp.style.animation = `steamRise ${3 + Math.random() * 1.6}s ease-out forwards`;
-    wrap.appendChild(wisp);
-    setTimeout(() => wisp.remove(), 5000);
-  }
-  setInterval(spawnSteam, 1500);
-  spawnSteam();
-
-  function burstSteam(count) {
-    const wrap = document.getElementById('mugWrap');
-    for (let i = 0; i < count; i++) {
-      const p = document.createElement('div');
-      p.className = 'puff';
-      const size = 3 + Math.random() * 5;
-      p.style.width = size + 'px';
-      p.style.height = size + 'px';
-      p.style.left = (44 + Math.random() * 12) + '%';
-      p.style.top = '20%';
-      const angle = (Math.random() * Math.PI) - Math.PI / 2 - Math.PI / 4;
-      const dist = 60 + Math.random() * 70;
-      const dx = Math.cos(angle) * dist;
-      const dy = Math.sin(angle) * dist - 40;
-      p.style.setProperty('--burst-end', `translate(${dx}px, ${dy}px)`);
-      p.style.animation = `puffBurst ${0.8 + Math.random() * 0.5}s cubic-bezier(0.22,1,0.36,1) forwards`;
-      wrap.appendChild(p);
-      setTimeout(() => p.remove(), 1500);
-    }
-    const svg = document.querySelector('.mug-svg');
-    svg.classList.add('clink');
-    setTimeout(() => svg.classList.remove('clink'), 450);
-  }
-
-  function showToast(text) {
-    const t = document.getElementById('toast');
-    t.textContent = text;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3200);
-  }
-
-  async function refresh() {
-    let data;
-    try {
-      const res = await fetch('/api/stats', { cache: 'no-store' });
-      data = await res.json();
-    } catch (err) {
-      return;
-    }
-
-    const isNewTip = !firstLoad && data.total > currentTotal;
-
-    setLiquidLevel(data.pct);
-
-    if (isNewTip) {
-      burstSteam(14);
-      const latest = data.recent && data.recent[0];
-      if (latest) {
-        showToast(`☕ ${latest.name || 'Anonymous'} just bought a coffee`);
-      }
-    }
-
-    currentTotal = data.total;
-    firstLoad = false;
-
-    const onlineEl = document.getElementById('onlineCount');
-    if (onlineEl) onlineEl.textContent = data.online ?? '–';
-  }
-
-  refresh();
-  setInterval(refresh, 5000);
-
   // ---------- Live presence ----------
   const clientId = (() => {
     let id = sessionStorage.getItem('gc_client_id');
@@ -541,15 +520,37 @@
     return id;
   })();
 
-  function heartbeat() {
-    fetch('/api/heartbeat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ clientId }),
-    }).catch(() => {});
+  async function heartbeat() {
+    try {
+      const res = await fetch('/api/heartbeat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clientId }),
+      });
+      const data = await res.json();
+      const onlineEl = document.getElementById('onlineCount');
+      if (onlineEl) onlineEl.textContent = data.online ?? '–';
+    } catch (err) {}
   }
   heartbeat();
   setInterval(heartbeat, 10000);
+
+  // ---------- Ambient embers ----------
+  function spawnEmber() {
+    const wrap = document.getElementById('medallionWrap');
+    const ember = document.createElement('div');
+    ember.className = 'ember';
+    const size = 3 + Math.random() * 4;
+    ember.style.width = size + 'px';
+    ember.style.height = size + 'px';
+    ember.style.left = (20 + Math.random() * 60) + '%';
+    ember.style.bottom = (10 + Math.random() * 60) + '%';
+    ember.style.animation = `emberDrift ${2.6 + Math.random() * 1.6}s ease-out forwards`;
+    wrap.appendChild(ember);
+    setTimeout(() => ember.remove(), 4500);
+  }
+  setInterval(spawnEmber, 900);
+  spawnEmber();
 
   // ---------- Click tracking ----------
   function trackClick(linkId) {
